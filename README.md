@@ -20,10 +20,11 @@ Material interactivo de apoyo para las **Actividades integradoras 5 y 6 del Mód
 | 1. Capitalización | Compara la misma tasa con capitalización anual, semestral, trimestral y mensual. |
 | 2. Comparar instituciones | Calcula el rendimiento de cinco instituciones de ejemplo y elige según el riesgo que acepta. |
 | 3. Del ahorro al enganche | Ve cómo el monto de la inversión se convierte en enganche y cuánto queda por financiar. |
-| 4. Tabla de amortización | Construye la tabla renglón por renglón con explicación de cada columna. |
-| 5. 24 o 48 meses | Compara mensualidad, total pagado e intereses de los dos plazos. |
-| 6. Hoja de cálculo | Consulta las fórmulas de interés compuesto, `VF`, `PAGO` y la tabla de amortización. |
-| 7–9 | Ruta por pregunta, tres preguntas con retroalimentación y lista de revisión. |
+| 4. Tabla de amortización | Construye la tabla con el método alemán (amortización fija, pago mensual que baja) y ve cómo cambia el cálculo con una tasa mensual o anual. |
+| 5. Alemán y francés | Compara ambos métodos y simula un pago adicional. |
+| 6. 24 o 48 meses | Compara primer y último pago, total pagado e intereses de los dos plazos. |
+| 7. Hoja de cálculo | Consulta las fórmulas de interés compuesto, `VF` y la tabla de amortización con el método alemán. |
+| 8–10 | Ruta por pregunta, tres preguntas con retroalimentación y lista de revisión. |
 
 ## Estructura
 

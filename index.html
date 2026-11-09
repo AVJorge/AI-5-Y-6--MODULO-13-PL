@@ -204,15 +204,16 @@
   <a href="#capitalizacion">1. Capitalización</a>
   <a href="#instituciones">2. Comparar instituciones</a>
   <a href="#enganche">3. Del ahorro al enganche</a>
-  <a href="#amortizacion">4. Tabla de amortización</a>
-  <a href="#plazos">5. 24 o 48 meses</a>
-  <a href="#hojas6">6. En la hoja de cálculo</a>
-  <a href="#ruta6">7. Ruta por pregunta</a>
-  <a href="#quiz6">8. ¿Lo entendí?</a>
-  <a href="#lista6">9. Antes de entregar</a>
+  <a href="#amortizacion">4. Tabla (método alemán)</a>
+  <a href="#metodos">5. Alemán y francés</a>
+  <a href="#plazos">6. 24 o 48 meses</a>
+  <a href="#hojas6">7. En la hoja de cálculo</a>
+  <a href="#ruta6">8. Ruta por pregunta</a>
+  <a href="#quiz6">9. ¿Lo entendí?</a>
+  <a href="#lista6">10. Antes de entregar</a>
 </div></nav>
 <main>
-<section class="intro"><span class="step">Actividad integradora 6 · Mi inversión</span><h2>Invertir hoy para pagar menos mañana</h2><p class="lead">Vas a comparar dónde conviene invertir un ahorro, usar lo que obtengas como enganche de un auto y construir la tabla de amortización del crédito. Todo se conecta: la inversión reduce lo que debes y la tabla muestra cómo pagas cada mes.</p></section>
+<section class="intro"><span class="step">Actividad integradora 6 · Mi inversión</span><h2>Invertir hoy para pagar menos mañana</h2><p class="lead">Vas a comparar dónde conviene invertir un ahorro, usar lo que obtengas como enganche de un auto y construir la tabla de amortización del crédito con el método alemán. Todo se conecta: la inversión reduce lo que debes y la tabla muestra cómo pagas cada mes.</p></section>
 
 <!-- 1. CAPITALIZACIÓN -->
 <section id="capitalizacion">
@@ -258,41 +259,77 @@
   <p class="lead">El monto final de la inversión elegida se usa como enganche. Lo que falta para completar el precio es lo que se pide prestado.</p>
   <div class="flowline" id="flow"></div>
   <p class="small">Auto de ejemplo: <b>$210&nbsp;000</b>. La institución es la que quedó seleccionada en el paso 2.</p>
-  <div class="note blue"><b>Monto financiado = precio del auto − enganche.</b> Este es el valor de <b>P</b> en la tabla de amortización, no el precio completo.</div>
+  <div class="note blue"><b>Monto financiado = precio del auto − enganche.</b> Es la deuda inicial del periodo 1 en la tabla de amortización, no el precio completo.</div>
 </section>
 
 <!-- 4. AMORTIZACIÓN -->
 <section id="amortizacion">
   <span class="step">Paso 4</span>
-  <h2>La tabla de amortización, renglón por renglón</h2>
-  <p class="lead">Una tabla de amortización muestra cómo se paga un crédito con una <b>anualidad</b>: el pago es igual cada mes, pero el interés baja y el abono a capital sube, hasta que el saldo llega a cero.</p>
+  <h2>La tabla de amortización con el método alemán</h2>
+  <p class="lead">En el método alemán la deuda se divide en partes iguales: cada mes pagas la misma <b>amortización</b> más el interés de lo que aún debes. Como la deuda baja, el interés baja y el <b>pago mensual disminuye cada mes</b>.</p>
+  <div class="formula formlist">
+    <div><b>Amortización</b> = Monto financiado ÷ plazo</div>
+    <div><b>Pago de interés</b> = Deuda inicial × Interés %</div>
+    <div><b>Pago mensual</b> = Pago de interés + Amortización</div>
+    <div><b>Deuda final</b> = Deuda inicial − Amortización</div>
+  </div>
+
+  <div class="note"><b>Antes de calcular, revisa si la tasa es mensual o anual, porque cambia el procedimiento.</b> Si es <b>mensual</b>, úsala tal cual en la columna Interés %. Si es <b>anual</b>, divídela entre 12 para obtener la tasa mensual, porque los pagos son mensuales. Cambia el tipo de tasa en el ejemplo y observa la columna Interés %.</div>
   <div class="sel-row">
-    <label for="tR">Tasa mensual<select id="tR"><option value="1">1 %</option><option value="2">2 %</option><option value="3" selected>3 %</option><option value="5">5 %</option><option value="8">8 %</option><option value="10">10 %</option></select></label>
+    <label for="tT">Tipo de tasa<select id="tT"><option value="m" selected>Mensual</option><option value="a">Anual</option></select></label>
+    <label for="tR">Tasa<select id="tR"></select></label>
     <label for="tN">Plazo<select id="tN"><option value="12">12 meses</option><option value="24" selected>24 meses</option><option value="36">36 meses</option><option value="48">48 meses</option></select></label>
   </div>
   <div class="explain" id="tPay"></div>
   <div class="row">
-    <button type="button" class="btn" id="tNext">Calcular el siguiente mes ▸</button>
+    <button type="button" class="btn" id="tNext">Calcular el siguiente periodo ▸</button>
     <button type="button" class="btn ghost" id="tAll">Mostrar toda la tabla</button>
     <button type="button" class="btn ghost" id="tReset">Reiniciar</button>
   </div>
   <div class="explain" id="tExplain" aria-live="polite"></div>
-  <div class="tablewrap"><table class="amort"><thead><tr><th scope="col">Mes</th><th scope="col">Saldo inicial</th><th scope="col">Pago</th><th scope="col">Interés</th><th scope="col">Abono a capital</th><th scope="col">Saldo final</th></tr></thead><tbody id="tBody"></tbody><tfoot id="tFoot"></tfoot></table></div>
-  <div class="note"><b>En esta actividad la tasa es mensual:</b> úsala directamente en cada renglón, <b>sin dividir entre 12</b>. Es distinto de la Actividad 5, donde la tasa era anual y sí se dividía entre 12. Las opciones de este ejemplo también son mensuales.</div>
+  <div class="tablewrap"><table class="amort"><thead><tr><th scope="col">Plazo / periodo</th><th scope="col">Deuda inicial</th><th scope="col">Interés %</th><th scope="col">Pago de interés</th><th scope="col">Amortización</th><th scope="col">Pago mensual</th><th scope="col">Deuda final</th></tr></thead><tbody id="tBody"></tbody><tfoot id="tFoot"></tfoot></table></div>
 </section>
 
-<!-- 5. PLAZOS -->
-<section id="plazos">
+<!-- 5. ALEMÁN VS FRANCÉS -->
+<section id="metodos">
   <span class="step">Paso 5</span>
+  <h2>Método alemán y método francés</h2>
+  <p class="lead">Con la misma deuda, la misma tasa y el mismo plazo del paso 4, así se comparan los dos métodos.</p>
+  <div class="vs">
+    <div class="opt good"><h4>Método alemán</h4><p><b>Amortización fija</b>: el pago mensual empieza alto y baja cada mes. Desde el primer pago abonas una parte importante a la deuda.</p><p id="mAle" style="margin-top:8px"></p></div>
+    <div class="opt"><h4>Método francés</h4><p><b>Pago mensual fijo</b>: pagas lo mismo cada mes. Al principio casi todo el pago es interés y la deuda baja lento.</p><p id="mFra" style="margin-top:8px"></p></div>
+  </div>
+  <h3>Pago mensual de cada método</h3>
+  <div class="legend"><span><i style="background:#1f8a5b"></i>Alemán (baja cada mes)</span><span><i style="background:#2b5d8a"></i>Francés (fijo)</span></div>
+  <div class="chartbox"><svg id="cMet" viewBox="0 0 720 260" width="100%" role="img" aria-label="Pago mensual de cada método"></svg></div>
+  <div class="explain" id="mDiff"></div>
+
+  <h3>¿Y si haces un pago adicional?</h3>
+  <p>Un pago adicional se descuenta completo de la deuda. En el método alemán la amortización sigue siendo la misma, así que <b>el crédito termina antes</b>, <b>los pagos siguientes son menores</b> porque el interés se calcula sobre una deuda más baja, y te ahorras los intereses de los meses que ya no pagas.</p>
+  <div class="sel-row">
+    <label for="xA">Pago adicional<select id="xA"><option value="10000">$10 000</option><option value="20000" selected>$20 000</option><option value="30000">$30 000</option></select></label>
+    <label for="xM">Al terminar el periodo<select id="xM"><option value="3">3</option><option value="6" selected>6</option><option value="12">12</option></select></label>
+  </div>
+  <div class="kpis">
+    <div class="kpi"><small>Meses sin pago adicional</small><b id="xN0"></b></div>
+    <div class="kpi hl"><small>Meses con pago adicional</small><b id="xN1"></b></div>
+    <div class="kpi"><small>Intereses que te ahorras</small><b id="xSav"></b></div>
+  </div>
+  <div class="explain" id="xMsg"></div>
+</section>
+
+<!-- 6. PLAZOS -->
+<section id="plazos">
+  <span class="step">Paso 6</span>
   <h2>¿Qué cambia si pagas en 24 o en 48 meses?</h2>
-  <p class="lead">En tu actividad harás <b>dos tablas de amortización</b>: una a 48 meses (pregunta a) y otra a 24 meses (pregunta b). Con el mismo monto financiado y la misma tasa de ejemplo, así se comparan los dos plazos. También puedes ver cada tabla completa en el paso 4 cambiando el plazo.</p>
+  <p class="lead">En tu actividad harás <b>dos tablas de amortización</b>: una a 48 meses (pregunta a) y otra a 24 meses (pregunta b). Con la deuda y la tasa de ejemplo del paso 4, así se comparan. También puedes ver cada tabla completa en el paso 4 cambiando el plazo.</p>
   <div class="vs" id="vsPlazos"></div>
-  <p class="big-idea">Un plazo más largo <b>baja la mensualidad</b>, pero <b>sube el total de intereses</b>. La pregunta es cuánto te cuesta esa comodidad.</p>
+  <p class="big-idea">Un plazo más largo <b>baja los pagos mensuales</b>, pero <b>sube el total de intereses</b>. La pregunta es cuánto te cuesta esa comodidad.</p>
 </section>
 
 <!-- 6. HOJAS -->
 <section id="hojas6">
-  <span class="step">Paso 6</span>
+  <span class="step">Paso 7</span>
   <h2>Cómo armar tus hojas</h2>
   <div class="tabs sheet-tabs" id="s6Tabs" role="group" aria-label="Hoja">
     <button type="button" data-s="1" class="on" aria-pressed="true">Hoja 1 · Inversión</button>
@@ -301,43 +338,44 @@
   <div class="fbar"><b>fx</b><span id="ftext6">Selecciona una celda azul.</span></div>
   <div class="tablewrap"><table class="sheet" id="sheet6"></table></div>
   <div class="explain" id="fexp6" aria-live="polite">Aquí aparecerá la explicación de la fórmula.</div>
-  <p class="small">En inglés y en Google Sheets: <span class="mono">PAGO</span> = <span class="mono">PMT</span>, <span class="mono">VF</span> = <span class="mono">FV</span>, <span class="mono">SUMA</span> = <span class="mono">SUM</span>. El separador de argumentos puede ser coma o punto y coma.</p>
+  <p class="small">En inglés y en Google Sheets: <span class="mono">VF</span> = <span class="mono">FV</span>, <span class="mono">SUMA</span> = <span class="mono">SUM</span>. El separador de argumentos puede ser coma o punto y coma.</p>
 </section>
 
 <!-- 7. RUTA -->
 <section id="ruta6">
-  <span class="step">Paso 7</span>
+  <span class="step">Paso 8</span>
   <h2>Ruta de trabajo para cada parte</h2>
   <details><summary>Pregunta 1 · Rendimiento en cada institución</summary>
     <ol class="steps"><li>Para cada institución identifica la tasa anual y cuántas veces capitaliza al año (m).</li><li>Calcula el monto final con la fórmula de interés compuesto y un tiempo de 1 año.</li><li>Rendimiento = monto final − capital.</li></ol></details>
   <details><summary>Pregunta 2 · ¿Dónde invertirías y por qué?</summary>
     <ol class="steps"><li>Ordena las instituciones por rendimiento.</li><li>Revisa el riesgo de las que más rinden.</li><li>Argumenta con los cuatro datos (tasa, capitalización, tipo y riesgo) y con cifras.</li></ol></details>
   <details><summary>Tablas de amortización (48 y 24 meses)</summary>
-    <ol class="steps"><li>Enganche = monto final de la inversión que elegiste.</li><li>Monto financiado = precio del auto − enganche.</li><li>La tasa del enunciado es <b>mensual</b>: úsala tal cual, sin dividir entre 12.</li><li>Calcula el pago mensual con <span class="mono">PAGO</span>.</li><li>Arma los renglones: interés = saldo × tasa mensual; abono = pago − interés; saldo final = saldo − abono.</li><li>Haz la tabla de 48 meses y comprueba que el saldo del último mes quede en 0 (o casi, por redondeo).</li><li>Para la tabla de 24 meses, copia la hoja (clic derecho en la pestaña → Mover o copiar → Crear una copia), cambia el plazo a 24 y deja solo 24 renglones.</li></ol></details>
+    <ol class="steps"><li>Enganche = monto final de la inversión que elegiste.</li><li>Monto financiado = precio del auto − enganche. Es la deuda inicial del periodo 1.</li><li>Revisa si la tasa es mensual o anual. Mensual: úsala tal cual. Anual: divídela entre 12.</li><li>Amortización = monto financiado ÷ plazo. Es igual en todos los periodos.</li><li>En cada renglón: pago de interés = deuda inicial × interés %; pago mensual = pago de interés + amortización; deuda final = deuda inicial − amortización.</li><li>La deuda inicial de cada periodo es la deuda final del anterior. Comprueba que la deuda final del último periodo sea 0.</li><li>Para la tabla de 24 meses, copia la hoja (clic derecho en la pestaña → Mover o copiar → Crear una copia), cambia el plazo a 24 y deja solo 24 renglones.</li></ol></details>
   <details><summary>Pregunta a · ¿Cuánto pagarás al terminar los 48 meses?</summary>
-    <ol class="steps"><li>Usa la tabla de 48 meses.</li><li>Suma la columna de pagos.</li><li>Calcula cuánto pagaste de intereses: total pagado − monto financiado.</li></ol></details>
+    <ol class="steps"><li>Usa la tabla de 48 meses.</li><li>Suma la columna Pago mensual.</li><li>Suma la columna Pago de interés para saber cuánto pagaste de intereses.</li></ol></details>
   <details><summary>Pregunta b · ¿Y si el plazo fuera de 24 meses?</summary>
-    <ol class="steps"><li>Usa la tabla de 24 meses.</li><li>Suma la columna de pagos y calcula los intereses.</li><li>Compara mensualidad, total pagado e intereses con los de 48 meses.</li></ol></details>
+    <ol class="steps"><li>Usa la tabla de 24 meses.</li><li>Suma la columna Pago mensual y la de Pago de interés.</li><li>Compara el primer y el último pago, el total pagado y los intereses con los de 48 meses.</li></ol></details>
   <details><summary>Hoja 3 · Explicación</summary>
-    <ol class="steps"><li>Explica cómo el ahorro permitió invertir y cómo la inversión redujo la deuda.</li><li>Explica qué te enseña la tabla de amortización sobre el costo de un crédito.</li><li>Relaciónalo con una decisión personal o familiar.</li></ol></details>
+    <ol class="steps"><li>Explica cómo el ahorro permitió invertir y cómo la inversión redujo la deuda.</li><li>Explica qué te enseña la tabla de amortización sobre el costo de un crédito y por qué el pago baja cada mes en el método alemán.</li><li>Relaciónalo con una decisión personal o familiar.</li></ol></details>
 </section>
 
-<section id="quiz6"><span class="step">Paso 8</span><h2>¿Lo entendí? Tres situaciones rápidas</h2><div id="qz6"></div></section>
+<section id="quiz6"><span class="step">Paso 9</span><h2>¿Lo entendí? Tres situaciones rápidas</h2><div id="qz6"></div></section>
 
-<section id="lista6"><span class="step">Paso 9</span><h2>Antes de entregar</h2>
+<section id="lista6"><span class="step">Paso 10</span><h2>Antes de entregar</h2>
   <div class="check" id="check6">
     <label><input type="checkbox"> Hoja 1: monto final y rendimiento de las cinco instituciones, con fórmulas.</label>
     <label><input type="checkbox"> Usé el número correcto de capitalizaciones al año en cada institución.</label>
     <label><input type="checkbox"> Justifiqué mi elección con tasa, capitalización, tipo de inversión y riesgo.</label>
     <label><input type="checkbox"> Hoja 2: el enganche es el monto final de la inversión elegida.</label>
-    <label><input type="checkbox"> Hice dos tablas de amortización, una a 48 meses y otra a 24, y ambas terminan en 0.</label>
-    <label><input type="checkbox"> Usé la tasa mensual directamente, sin dividir entre 12.</label>
+    <label><input type="checkbox"> Hice dos tablas con el método alemán, una a 48 meses y otra a 24, con las columnas Plazo/periodo, Deuda inicial, Interés %, Pago de interés, Amortización, Pago mensual y Deuda final.</label>
+    <label><input type="checkbox"> Revisé si la tasa es mensual o anual y la usé correctamente.</label>
+    <label><input type="checkbox"> En mis tablas la amortización es igual cada mes, el pago mensual baja y la deuda final del último periodo es 0.</label>
     <label><input type="checkbox"> Respondí cuánto pago en 48 meses y en 24 meses con la suma de pagos de cada tabla, y los comparé.</label>
     <label><input type="checkbox"> Hoja 3: expliqué cómo el ahorro, la inversión y la amortización ayudan a decidir.</label>
     <label><input type="checkbox"> Cité fuentes y herramientas de IA según el manual vigente de PL-SEP.</label>
   </div>
-  <div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="9" aria-valuenow="0"><div></div></div>
-  <p class="small ptext">0 de 9</p>
+  <div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0"><div></div></div>
+  <p class="small ptext">0 de 10</p>
 </section>
 </main>
 </div>
