@@ -213,3 +213,7 @@ nav.switch a[aria-current="page"]:hover{background:#fff}
 .vs .opt.bad{border-color:var(--out)}
 .sheet-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
 .big-idea{font-size:19px;line-height:1.5;border-left:5px solid var(--acc);padding:6px 0 6px 14px;margin:12px 0}
+
+.formlist{text-align:left;font-size:16px;line-height:1.7}
+.formlist div{padding:2px 0}
+@media(max-width:520px){.formlist{font-size:14px}}

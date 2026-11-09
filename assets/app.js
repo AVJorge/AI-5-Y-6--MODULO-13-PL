@@ -433,8 +433,9 @@
     renderInst();
   }));
 
-  /* ===================== AI6 · Enganche y amortización ===================== */
+  /* ===================== AI6 · Enganche y amortización (método alemán) ===================== */
   const AUTO = 210000;
+  const RATES = { m: [1, 2, 3, 5, 8, 10], a: [10, 14, 16, 18, 24] };   // sin 12 %: es la tasa de la actividad
   let shown = 0;
   function financiado() { return AUTO - pickInst().M; }
 
@@ -446,79 +447,154 @@
       `<div class="fb">Enganche<b>${money2(p.M)}</b></div><span class="ar">→</span>` +
       `<div class="fb">Auto ${money(AUTO)} − enganche<b>${money2(financiado())}</b><small>monto financiado</small></div>`;
     shown = 0;
-    renderAmort();
-    renderPlazos();
+    renderAll6();
   }
 
-  function schedule(P, i, n) {
-    const R = pago(P, i, n);
-    const rows = [];
-    let s = P;
-    for (let k = 1; k <= n; k++) {
-      const int = s * i, ab = R - int, fin = s - ab;
-      rows.push({ k, ini: s, R, int, ab, fin });
-      s = fin;
+  function fillRates() {
+    const tipo = $('tT').value, sel = $('tR');
+    sel.textContent = '';
+    RATES[tipo].forEach((r) => {
+      const o = document.createElement('option');
+      o.value = r; o.textContent = r + ' % ' + (tipo === 'm' ? 'mensual' : 'anual');
+      if (r === (tipo === 'm' ? 3 : 18)) o.selected = true;
+      sel.appendChild(o);
+    });
+  }
+  // Tasa mensual en decimal según el tipo de tasa elegido.
+  function tasaMensual() { const r = +$('tR').value / 100; return $('tT').value === 'm' ? r : r / 12; }
+
+  // Método alemán: amortización fija; opcionalmente un pago adicional al terminar el periodo `mes`.
+  function aleman(P, i, n, extra = 0, mes = 0) {
+    const A = P / n, rows = [];
+    let d = P;
+    for (let k = 1; d > 0.005 && k <= n; k++) {
+      const pi = d * i, am = Math.min(A, d), pm = pi + am;
+      let fin = d - am;
+      const ex = k === mes ? Math.min(extra, fin) : 0;
+      fin -= ex;
+      rows.push({ k, ini: d, pi, am, pm, fin, ex });
+      d = fin;
     }
-    return { R, rows };
+    return { A, rows, int: rows.reduce((x, r) => x + r.pi, 0), tot: rows.reduce((x, r) => x + r.pm, 0) };
+  }
+  // Método francés (pago fijo), solo para comparar.
+  function frances(P, i, n, extra = 0, mes = 0) {
+    const R = i === 0 ? P / n : P * i / (1 - Math.pow(1 + i, -n));
+    let d = P, int = 0, k = 0, tot = 0;
+    while (d > 0.005 && k < n) {
+      k++;
+      const pi = d * i, am = Math.min(R - pi, d);
+      int += pi; tot += pi + am; d -= am;
+      if (k === mes) d -= Math.min(extra, d);
+    }
+    return { R, int, tot, meses: k };
   }
 
   function renderAmort() {
-    const P = financiado(), r = +$('tR').value, n = +$('tN').value, i = r / 100;
-    const { R, rows } = schedule(P, i, n);
-    $('tPay').innerHTML = `Monto financiado <b>${money2(P)}</b> · tasa mensual ${pct(r)} = <b>${i.toFixed(2)}</b> (ya es mensual, no se divide entre 12) · ${n} pagos → pago mensual (anualidad) = <b>${money2(R)}</b>`;
+    const P = financiado(), n = +$('tN').value, i = tasaMensual(), r = +$('tR').value;
+    const { A, rows } = aleman(P, i, n);
+    const tasaTxt = $('tT').value === 'm'
+      ? `tasa mensual ${pct(r)}: se usa tal cual, Interés % = <b>${pct(i * 100)}</b>`
+      : `tasa anual ${pct(r)} ÷ 12 = Interés % mensual <b>${pct(Math.round(i * 1e6) / 1e4)}</b>`;
+    $('tPay').innerHTML = `Monto financiado <b>${money2(P)}</b> · ${tasaTxt}<br>Amortización = ${money2(P)} ÷ ${n} = <b>${money2(A)}</b> cada periodo`;
     const body = $('tBody');
     body.textContent = '';
+    const ipct = pct(Math.round(i * 1e6) / 1e4);
     rows.slice(0, shown).forEach((x, idx) => {
       const tr = body.insertRow();
       if (idx === shown - 1) tr.className = 'hl';
-      [x.k, money2(x.ini), money2(x.R), money2(x.int), money2(x.ab), money2(x.fin)].forEach((v) => { tr.insertCell().textContent = v; });
+      [x.k, money2(x.ini), ipct, money2(x.pi), money2(x.am), money2(x.pm), money2(x.fin)].forEach((v) => { tr.insertCell().textContent = v; });
     });
     const foot = $('tFoot');
     foot.textContent = '';
     if (shown === n) {
-      const tp = R * n, ti = tp - P;
-      const add = (label, v) => { const tr = foot.insertRow(); const th = document.createElement('th'); th.colSpan = 5; th.textContent = label; tr.appendChild(th); const td = document.createElement('th'); td.textContent = v; tr.appendChild(td); };
-      add(`Total de los ${n} pagos`, money2(tp));
-      add('Intereses pagados (total − monto financiado)', money2(ti));
-      add('Costo total del auto (enganche + pagos)', money2(pickInst().M + tp));
+      const tp = rows.reduce((a, x) => a + x.pm, 0), ti = rows.reduce((a, x) => a + x.pi, 0);
+      const add = (label, v) => { const tr = foot.insertRow(); const th = document.createElement('th'); th.colSpan = 6; th.textContent = label; tr.appendChild(th); const td = document.createElement('th'); td.textContent = v; tr.appendChild(td); };
+      add(`Total pagado en ${n} meses (suma de Pago mensual)`, money2(tp));
+      add('Total de intereses (suma de Pago de interés)', money2(ti));
+      add('Costo total del auto (enganche + total pagado)', money2(pickInst().M + tp));
     }
     $('tNext').disabled = shown >= n;
     $('tAll').disabled = shown >= n;
     const e = $('tExplain');
     if (!shown) {
-      e.textContent = 'Presiona “Calcular el siguiente mes” para ver de dónde sale cada columna.';
+      e.textContent = 'Presiona “Calcular el siguiente periodo” para ver de dónde sale cada columna.';
     } else {
       const x = rows[shown - 1];
-      const origen = x.k === 1 ? 'El saldo inicial del mes 1 es el monto financiado.' : `El saldo inicial del mes ${x.k} es el saldo final del mes ${x.k - 1}.`;
+      const origen = x.k === 1 ? 'La deuda inicial del periodo 1 es el monto financiado.' : `La deuda inicial del periodo ${x.k} es la deuda final del periodo ${x.k - 1}.`;
       e.innerHTML = `${origen}<br>
-        <span class="chip out">Interés</span> ${money2(x.ini)} × ${i.toFixed(2)} = <b>${money2(x.int)}</b> &nbsp;·&nbsp;
-        <span class="chip in">Abono</span> ${money2(x.R)} − ${money2(x.int)} = <b>${money2(x.ab)}</b><br>
-        <span class="chip base">Saldo final</span> ${money2(x.ini)} − ${money2(x.ab)} = <b>${money2(x.fin)}</b>` +
-        (shown === n ? '<br><i>El saldo llegó a cero: el crédito quedó pagado.</i>' : '');
+        <span class="chip out">Pago de interés</span> ${money2(x.ini)} × ${ipct} = <b>${money2(x.pi)}</b> &nbsp;·&nbsp;
+        <span class="chip in">Amortización</span> <b>${money2(x.am)}</b> (siempre igual)<br>
+        <span class="chip base">Pago mensual</span> ${money2(x.pi)} + ${money2(x.am)} = <b>${money2(x.pm)}</b> &nbsp;·&nbsp;
+        Deuda final: ${money2(x.ini)} − ${money2(x.am)} = <b>${money2(x.fin)}</b>` +
+        (x.k > 1 ? `<br><i>El pago mensual bajó ${money2(rows[x.k - 2].pm - x.pm)} respecto al periodo anterior.</i>` : '') +
+        (shown === n ? '<br><i>La deuda llegó a cero: el crédito quedó pagado.</i>' : '');
     }
   }
-  $('tNext').addEventListener('click', () => { shown = Math.min(shown + 1, +$('tN').value); renderAmort(); });
-  $('tAll').addEventListener('click', () => { shown = +$('tN').value; renderAmort(); });
-  $('tReset').addEventListener('click', () => { shown = 0; renderAmort(); });
-  ['tR', 'tN'].forEach((id) => $(id).addEventListener('change', () => { shown = 0; renderAmort(); renderPlazos(); }));
+
+  function renderMetodos() {
+    const P = financiado(), n = +$('tN').value, i = tasaMensual();
+    const al = aleman(P, i, n), fr = frances(P, i, n);
+    $('mAle').innerHTML = `Primer pago <b>${money2(al.rows[0].pm)}</b> · último pago <b>${money2(al.rows[al.rows.length - 1].pm)}</b><br>Intereses totales: <b>${money2(al.int)}</b>`;
+    $('mFra').innerHTML = `Pago fijo <b>${money2(fr.R)}</b> todos los meses<br>Intereses totales: <b>${money2(fr.int)}</b>`;
+    $('mDiff').innerHTML = `Con el método alemán pagas <b>${money2(fr.int - al.int)}</b> menos de intereses, porque la deuda baja más rápido desde el primer mes. A cambio, los primeros pagos son más altos que en el francés: conviene si tu presupuesto los soporta.`;
+
+    const svg = $('cMet');
+    clear(svg);
+    const W = 720, H = 260, L = 76, Rr = 14, T = 16, B = 30;
+    const maxV = Math.max(al.rows[0].pm, fr.R) * 1.08;
+    const xs = (k) => L + (k - 0.5) * (W - L - Rr) / n;
+    const ys = (v) => H - B - v / maxV * (H - T - B);
+    [0, 0.5, 1].forEach((f) => {
+      const v = maxV * f, y = ys(v);
+      svg.appendChild(el('line', { x1: L, x2: W - Rr, y1: y, y2: y, stroke: '#eee' }));
+      svg.appendChild(el('text', { x: L - 6, y: y + 4, 'font-size': 11.5, 'text-anchor': 'end', fill: '#5b6670' }, money(v)));
+    });
+    const step = n <= 12 ? 1 : n <= 24 ? 2 : n <= 36 ? 3 : 4;
+    for (let k = 1; k <= n; k++) if (k === 1 || k % step === 0) svg.appendChild(el('text', { x: xs(k), y: H - B + 16, 'font-size': 11.5, 'text-anchor': 'middle', fill: '#5b6670' }, k));
+    svg.appendChild(el('polyline', { fill: 'none', stroke: '#2b5d8a', 'stroke-width': 3, points: `${xs(1)},${ys(fr.R)} ${xs(n)},${ys(fr.R)}` }));
+    svg.appendChild(el('polyline', { fill: 'none', stroke: '#1f8a5b', 'stroke-width': 3, points: al.rows.map((x) => `${xs(x.k)},${ys(x.pm)}`).join(' ') }));
+    svg.setAttribute('aria-label', `Alemán: de ${money2(al.rows[0].pm)} a ${money2(al.rows[al.rows.length - 1].pm)}. Francés: ${money2(fr.R)} fijo.`);
+
+    // Pago adicional
+    const ex = +$('xA').value, mes = +$('xM').value;
+    const mesOk = Math.min(mes, n - 1);
+    const conEx = aleman(P, i, n, ex, mesOk), frEx = frances(P, i, n, ex, mesOk);
+    $('xN0').textContent = n + ' meses';
+    $('xN1').textContent = conEx.rows.length + ' meses';
+    $('xSav').textContent = money2(al.int - conEx.int);
+    const sig = conEx.rows[mesOk], sinSig = al.rows[mesOk];
+    $('xMsg').innerHTML = `Con un pago adicional de <b>${money(ex)}</b> al terminar el periodo ${mesOk}, el crédito termina <b>${n - conEx.rows.length} meses antes</b> y pagas <b>${money2(al.int - conEx.int)}</b> menos de intereses.` +
+      (sig && sinSig ? ` El pago del periodo ${mesOk + 1} baja de ${money2(sinSig.pm)} a <b>${money2(sig.pm)}</b>.` : '') +
+      `<br><i>Si hicieras el mismo pago adicional en el método francés, los intereses totales serían ${money2(frEx.int)}; con el alemán son ${money2(conEx.int)}.</i>`;
+  }
 
   function renderPlazos() {
-    const P = financiado(), r = +$('tR').value, i = r / 100;
+    const P = financiado(), i = tasaMensual();
     const box = $('vsPlazos');
     box.textContent = '';
     [24, 48].forEach((n) => {
-      const R = pago(P, i, n), tp = R * n;
+      const al = aleman(P, i, n);
       const d = document.createElement('div');
       d.className = 'opt';
-      d.innerHTML = `<h4>${n} meses</h4><p>Pago mensual: <b>${money2(R)}</b><br>Total pagado: <b>${money2(tp)}</b><br>Intereses: <b>${money2(tp - P)}</b></p>`;
+      d.innerHTML = `<h4>${n} meses</h4><p>Primer pago: <b>${money2(al.rows[0].pm)}</b><br>Último pago: <b>${money2(al.rows[n - 1].pm)}</b><br>Total pagado: <b>${money2(al.tot)}</b><br>Intereses: <b>${money2(al.int)}</b></p>`;
       box.appendChild(d);
     });
     const p = document.createElement('p');
     p.className = 'small';
     p.style.gridColumn = '1 / -1';
-    p.textContent = `Ejemplo con ${money2(P)} financiados a ${pct(r)} mensual (la tasa elegida en el paso 4).`;
+    p.textContent = `Ejemplo con ${money2(P)} financiados con la tasa elegida en el paso 4, método alemán.`;
     box.appendChild(p);
   }
+
+  function renderAll6() { renderAmort(); renderMetodos(); renderPlazos(); }
+  $('tNext').addEventListener('click', () => { shown = Math.min(shown + 1, +$('tN').value); renderAmort(); });
+  $('tAll').addEventListener('click', () => { shown = +$('tN').value; renderAmort(); });
+  $('tReset').addEventListener('click', () => { shown = 0; renderAmort(); });
+  $('tT').addEventListener('change', () => { fillRates(); shown = 0; renderAll6(); });
+  ['tR', 'tN'].forEach((id) => $(id).addEventListener('change', () => { shown = 0; renderAll6(); }));
+  ['xA', 'xM'].forEach((id) => $(id).addEventListener('change', renderMetodos));
+  fillRates();
 
   /* ===================== AI6 · Hojas de cálculo ===================== */
   const S6 = {
@@ -539,38 +615,40 @@
       }
     },
     2: {
-      header: ['', 'A', 'B', 'C', 'D', 'E', 'F'],
+      header: ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G'],
       rows: [
-        ['1', { t: 'Precio del auto', cls: 'lbl' }, 'dato', '', '', '', ''],
-        ['2', { t: 'Enganche', cls: 'lbl' }, '=Hoja1!E2', '', '', '', ''],
-        ['3', { t: 'Monto financiado', cls: 'lbl' }, '=B1-B2', '', '', '', ''],
-        ['4', { t: 'Tasa mensual', cls: 'lbl' }, 'dato %', '', '', '', ''],
-        ['5', { t: 'Plazo (meses)', cls: 'lbl' }, 'dato', '', '', '', ''],
-        ['6', { t: 'Pago mensual', cls: 'lbl' }, '=PAGO(B4,B5,-B3)', '', '', '', ''],
-        ['8', { t: 'Mes', cls: 'lbl' }, { t: 'Saldo inicial', cls: 'lbl' }, { t: 'Pago', cls: 'lbl' }, { t: 'Interés', cls: 'lbl' }, { t: 'Abono a capital', cls: 'lbl' }, { t: 'Saldo final', cls: 'lbl' }],
-        ['9', '1', '=B3', '=$B$6', '=B9*$B$4', '=C9-D9', '=B9-E9'],
-        ['10', '=A9+1', '=F9', '=$B$6', '=B10*$B$4', '=C10-D10', '=B10-E10'],
-        ['11', { t: '… copia la fila 10 hacia abajo hasta el mes 48 (fila 56) …', span: 6 }],
-        ['57', { t: 'Totales', cls: 'lbl' }, '', '=SUMA(C9:C56)', '=SUMA(D9:D56)', '', ''],
-        ['58', { t: 'Costo total del auto', cls: 'lbl' }, '=B2+C57', '', '', '', '']
+        ['1', { t: 'Precio del auto', cls: 'lbl' }, 'dato', '', '', '', '', ''],
+        ['2', { t: 'Enganche', cls: 'lbl' }, '=Hoja1!E2', '', '', '', '', ''],
+        ['3', { t: 'Monto financiado', cls: 'lbl' }, '=B1-B2', '', '', '', '', ''],
+        ['4', { t: 'Interés % (mensual)', cls: 'lbl' }, 'dato %', '', '', '', '', ''],
+        ['5', { t: 'Plazo (meses)', cls: 'lbl' }, 'dato', '', '', '', '', ''],
+        ['6', { t: 'Amortización', cls: 'lbl' }, '=B3/B5', '', '', '', '', ''],
+        ['8', { t: 'Plazo / periodo', cls: 'lbl' }, { t: 'Deuda inicial', cls: 'lbl' }, { t: 'Interés %', cls: 'lbl' }, { t: 'Pago de interés', cls: 'lbl' }, { t: 'Amortización', cls: 'lbl' }, { t: 'Pago mensual', cls: 'lbl' }, { t: 'Deuda final', cls: 'lbl' }],
+        ['9', '1', '=B3', '=$B$4', '=B9*C9', '=$B$6', '=D9+E9', '=B9-E9'],
+        ['10', '=A9+1', '=G9', '=$B$4', '=B10*C10', '=$B$6', '=D10+E10', '=B10-E10'],
+        ['11', { t: '… copia la fila 10 hacia abajo hasta el periodo 48 (fila 56) …', span: 7 }],
+        ['57', { t: 'Totales', cls: 'lbl' }, '', '', '=SUMA(D9:D56)', '=SUMA(E9:E56)', '=SUMA(F9:F56)', ''],
+        ['58', { t: 'Costo total del auto', cls: 'lbl' }, '=B2+F57', '', '', '', '', '']
       ],
       FX: {
         '=Hoja1!E2': 'El enganche es el monto final de la inversión elegida. Cambia E2 por la fila de la institución que escogiste.',
-        '=B1-B2': 'Monto financiado = precio − enganche. Es lo que pides prestado.',
-        '=PAGO(B4,B5,-B3)': 'Pago mensual (anualidad): tasa mensual, número de pagos y monto financiado. La tasa ya es mensual, por eso no se divide entre 12.',
-        '=B3': 'El primer mes empieza con todo el monto financiado.',
-        '=$B$6': 'El pago es igual todos los meses: siempre lee la celda B6.',
-        '=B9*$B$4': 'Interés del mes = saldo inicial × tasa mensual. $B$4 queda fijo al copiar la fórmula.',
-        '=C9-D9': 'Abono a capital = pago − interés. Es lo que realmente reduce tu deuda.',
-        '=B9-E9': 'Saldo final = saldo inicial − abono a capital.',
-        '=A9+1': 'Número de mes.',
-        '=F9': 'Clave: el saldo inicial de un mes es el saldo final del mes anterior.',
-        '=B10*$B$4': 'Interés del mes 2, ahora sobre un saldo menor.',
-        '=C10-D10': 'Abono a capital del mes 2.',
-        '=B10-E10': 'Saldo final del mes 2.',
-        '=SUMA(C9:C56)': 'Total pagado en la tabla de 48 meses (filas 9 a 56). En la copia de 24 meses, la tabla termina en la fila 32 y la suma es =SUMA(C9:C32).',
-        '=SUMA(D9:D56)': 'Total de intereses pagados en 48 meses. En la tabla de 24 meses: =SUMA(D9:D32).',
-        '=B2+C57': 'Costo total del auto = enganche + todos los pagos.'
+        '=B1-B2': 'Monto financiado = precio − enganche. Es la deuda inicial del periodo 1.',
+        '=B3/B5': 'Amortización = monto financiado ÷ plazo. En el método alemán es igual en todos los periodos.',
+        '=B3': 'El periodo 1 empieza con todo el monto financiado.',
+        '=$B$4': 'Interés % mensual. Si la tasa del problema es mensual, se usa tal cual. Si fuera anual, aquí escribirías =$B$4/12.',
+        '=B9*C9': 'Pago de interés = deuda inicial × interés %.',
+        '=$B$6': 'La amortización es fija: siempre lee la celda B6.',
+        '=D9+E9': 'Pago mensual = pago de interés + amortización. Como el interés baja, este pago baja cada mes.',
+        '=B9-E9': 'Deuda final = deuda inicial − amortización.',
+        '=A9+1': 'Número de periodo.',
+        '=G9': 'Clave: la deuda inicial de un periodo es la deuda final del periodo anterior.',
+        '=B10*C10': 'Pago de interés del periodo 2, ahora sobre una deuda menor.',
+        '=D10+E10': 'Pago mensual del periodo 2: menor que el del periodo 1.',
+        '=B10-E10': 'Deuda final del periodo 2.',
+        '=SUMA(D9:D56)': 'Total de intereses en 48 meses. En la copia de 24 meses la tabla termina en la fila 32: =SUMA(D9:D32).',
+        '=SUMA(E9:E56)': 'Suma de las amortizaciones: debe ser igual al monto financiado. Sirve para comprobar tu tabla.',
+        '=SUMA(F9:F56)': 'Total pagado en 48 meses (suma de Pago mensual). En 24 meses: =SUMA(F9:F32).',
+        '=B2+F57': 'Costo total del auto = enganche + total pagado.'
       }
     }
   };
@@ -592,10 +670,10 @@
       f: ['El rendimiento no está garantizado si el riesgo es alto.', 'Correcto. La decisión se justifica con rendimiento y riesgo juntos.', 'No hace falta elegir la menor tasa: hay opciones de bajo riesgo con buen rendimiento.']
     },
     {
-      p: 'Si el plazo del crédito cambia de 24 a 48 meses, ¿qué pasa?',
-      o: ['Baja la mensualidad y suben los intereses totales.', 'Baja la mensualidad y bajan los intereses.', 'Sube la mensualidad.'],
-      a: 0,
-      f: ['Correcto. Pagas menos cada mes, pero durante más tiempo.', 'Más meses debiendo significa más intereses.', 'Al repartir la deuda en más meses, el pago mensual baja.']
+      p: 'En una tabla con el método alemán, ¿qué se mantiene igual en todos los periodos?',
+      o: ['El pago mensual.', 'La amortización.', 'El pago de interés.'],
+      a: 1,
+      f: ['El pago mensual es fijo en el método francés; en el alemán baja cada mes.', 'Correcto. Amortización = monto financiado ÷ plazo, y por eso el pago mensual baja.', 'El pago de interés baja porque se calcula sobre una deuda cada vez menor.']
     }
   ]);
   buildChecklist('lista6');
