@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ahorra, invierte y paga a plazos · Módulo 13</title>
+<meta name="description" content="Material interactivo del Módulo 13: presupuesto familiar y anualidades (AI5), inversión, capitalización y tabla de amortización (AI6).">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232b5d8a'/%3E%3Crect x='6' y='18' width='5' height='8' fill='white'/%3E%3Crect x='13.5' y='13' width='5' height='13' fill='white'/%3E%3Crect x='21' y='7' width='5' height='19' fill='white'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<header><div class="wrap">
+  <p class="kicker">Material de apoyo · Módulo 13</p>
+  <h1>Ahorra, invierte y paga a plazos</h1>
+  <p>Aquí aprendes el <b>procedimiento</b> con datos de ejemplo. Los resultados de tu actividad los calculas tú con los datos de la plataforma.</p>
+  <nav class="switch" aria-label="Actividad">
+    <a href="#ai5" id="sw-ai5">Actividad integradora 5<small>Mi ahorro</small></a>
+    <a href="#ai6" id="sw-ai6">Actividad integradora 6<small>Mi inversión</small></a>
+  </nav>
+</div></header>
+
+<noscript><div>Este material necesita JavaScript para funcionar. Actívalo en tu navegador y recarga la página.</div></noscript>
+
+<!-- ===================== ACTIVIDAD 5 ===================== -->
+<div class="activity" id="act5">
+<nav aria-label="Secciones de la actividad 5"><div class="wrap">
+  <a href="#conceptos">1. Conceptos</a>
+  <a href="#presupuesto">2. Presupuesto anual</a>
+  <a href="#anualidad">3. ¿Qué es una anualidad?</a>
+  <a href="#calculadora">4. Calcula una mensualidad</a>
+  <a href="#hojas5">5. En la hoja de cálculo</a>
+  <a href="#ruta5">6. Ruta por pregunta</a>
+  <a href="#quiz5">7. ¿Lo entendí?</a>
+  <a href="#lista5">8. Antes de entregar</a>
+</div></nav>
+<main>
+<section class="intro"><span class="step">Actividad integradora 5 · Mi ahorro</span><h2>Un presupuesto familiar para alcanzar una meta</h2><p class="lead">Vas a registrar los ingresos y los egresos de una familia durante un año, calcular cuánto le sobra cada mes y decidir si conviene ahorrar o pedir un crédito para una compra grande.</p></section>
+
+<!-- 1. CONCEPTOS -->
+<section id="conceptos">
+  <span class="step">Paso 1</span>
+  <h2>Cuatro palabras que vas a usar todo el tiempo</h2>
+  <div class="concepts">
+    <div class="concept c-in"><b>Ingreso</b>Dinero que entra a la familia: sueldos, ventas, apoyos.<small>Ejemplo: el sueldo de mamá.</small></div>
+    <div class="concept c-out"><b>Egreso</b>Dinero que sale para pagar algo: comida, servicios, deudas.<small>Ejemplo: el recibo de luz.</small></div>
+    <div class="concept c-bal"><b>Saldo</b>Lo que queda después de pagar: ingresos − egresos.<small>Si es negativo, se gastó más de lo que entró.</small></div>
+    <div class="concept c-sav"><b>Ahorro</b>La parte del saldo que guardas para una meta.<small>Los saldos de varios meses se van sumando.</small></div>
+  </div>
+  <p class="big-idea">Ingresos − Egresos = <b>Saldo</b>. Si cada mes guardas el saldo, al sumar varios meses obtienes tu <b>ahorro acumulado</b>.</p>
+</section>
+
+<!-- 2. PRESUPUESTO ANUAL -->
+<section id="presupuesto">
+  <span class="step">Paso 2</span>
+  <h2>El presupuesto de la familia Ruiz, mes por mes</h2>
+  <p class="lead">La familia Ruiz quiere <b>impermeabilizar el techo</b>: necesita 24 cubetas de impermeabilizante a $1&nbsp;150 cada una. Mueve los controles para ver cómo cambian el saldo y el mes en que alcanzan su meta.</p>
+
+  <div class="ctrls">
+    <div class="ctrl"><label for="eAli">Alimentos al mes <span class="val" id="vAli"></span></label><input type="range" id="eAli" min="4000" max="6500" step="100" value="5200"></div>
+    <div class="ctrl"><label for="eOtr">Otros gastos al mes <span class="val" id="vOtr"></span></label><input type="range" id="eOtr" min="0" max="3000" step="100" value="1200"></div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><small>Meta (24 × $1&nbsp;150)</small><b id="kMeta"></b></div>
+    <div class="kpi"><small>Ingresos del año</small><b id="kIng"></b></div>
+    <div class="kpi"><small>Egresos del año</small><b id="kEgr"></b></div>
+    <div class="kpi hl"><small>¿Cuándo alcanzan la meta?</small><b id="kMes"></b></div>
+  </div>
+
+  <div class="tablewrap"><table class="mtable" id="tRuiz"></table></div>
+  <p class="small">La luz se paga cada dos meses (febrero, abril, junio…), por eso el saldo no es igual todos los meses. En verde oscuro, el mes en que el ahorro acumulado alcanza la meta.</p>
+
+  <h3>Ahorro acumulado contra la meta</h3>
+  <div class="legend"><span><i style="background:#2b5d8a"></i>Ahorro acumulado</span><span><i style="background:#c2492d"></i>Meta</span></div>
+  <div class="chartbox"><svg id="cRuiz" viewBox="0 0 720 280" width="100%" role="img" aria-label="Ahorro acumulado por mes"></svg></div>
+  <div class="note blue"><b>Clave para la pregunta 2:</b> para saber si alcanza en cierto número de meses, no compares la meta con el saldo de un solo mes, sino con la <b>suma de los saldos</b> de esos meses (el ahorro acumulado).</div>
+</section>
+
+<!-- 3. ANUALIDAD -->
+<section id="anualidad">
+  <span class="step">Paso 3</span>
+  <h2>¿Qué es una anualidad?</h2>
+  <p class="big-idea">Una <b>anualidad</b> es una serie de <b>pagos iguales</b> que se hacen <b>cada cierto tiempo</b> (cada mes, por ejemplo) con la misma tasa de interés.</p>
+  <p>El nombre confunde: “anualidad” no significa que se pague cada año. La mensualidad de un celular, de un auto o de una casa es una anualidad, porque pagas lo mismo cada mes hasta terminar.</p>
+
+  <div class="grid2">
+    <div class="opt">
+      <h4>Imagina una rebanada de pastel</h4>
+      <p>Cada mensualidad tiene dos partes. Una paga el <span class="chip out">interés</span>, que es lo que cuesta usar el dinero prestado. La otra es el <span class="chip in">abono a capital</span>, que reduce lo que todavía debes.</p>
+    </div>
+    <div class="opt">
+      <h4>¿Por qué el pago es igual, pero las partes cambian?</h4>
+      <p>El interés se calcula sobre lo que <b>aún debes</b>. Al principio debes mucho y el interés es grande; cada mes debes menos, el interés baja y una parte mayor del pago se va a capital.</p>
+    </div>
+  </div>
+
+  <h3>La fórmula de la mensualidad</h3>
+  <div class="formula"><span class="nw">R = P × i ÷ [1 − (1 + i)<sup>−n</sup>]</span></div>
+  <ul>
+    <li><b>R</b>: pago mensual (la anualidad).</li>
+    <li><b>P</b>: monto del crédito, lo que cuesta lo que compras.</li>
+    <li><b>i</b>: tasa de interés <b>mensual</b> en decimal. Si te dan una tasa anual, divídela entre 12; si ya es mensual, úsala tal cual.</li>
+    <li><b>n</b>: número de pagos (meses).</li>
+  </ul>
+  <div class="note"><b>En la hoja de cálculo no necesitas escribir la fórmula completa:</b> la función <span class="mono">PAGO</span> hace el cálculo. Lo verás en el paso 5.</div>
+</section>
+
+<!-- 4. CALCULADORA -->
+<section id="calculadora">
+  <span class="step">Paso 4</span>
+  <h2>Calcula una mensualidad de ejemplo</h2>
+  <p class="lead">Elige un monto, una tasa anual y un plazo. Verás la fórmula resuelta paso a paso y cómo se divide cada pago. Los montos van de $5&nbsp;000 a $30&nbsp;000 y no hay tasa de 9 %, así que no puedes capturar los datos de tu actividad.</p>
+
+  <div class="ctrls">
+    <div class="ctrl"><label for="aP">Monto del crédito <span class="val" id="vaP"></span></label><input type="range" id="aP" min="5000" max="30000" step="1000" value="18000"></div>
+  </div>
+  <div class="sel-row">
+    <label for="aR">Tasa anual<select id="aR"><option value="6">6 %</option><option value="8">8 %</option><option value="10">10 %</option><option value="12" selected>12 %</option><option value="15">15 %</option><option value="18">18 %</option></select></label>
+    <label for="aN">Plazo<select id="aN"><option value="6">6 meses</option><option value="12" selected>12 meses</option><option value="18">18 meses</option><option value="24">24 meses</option></select></label>
+  </div>
+
+  <div class="explain" id="aSteps"></div>
+  <div class="kpis">
+    <div class="kpi hl"><small>Pago mensual</small><b id="aR1"></b></div>
+    <div class="kpi"><small>Total pagado</small><b id="aTot"></b></div>
+    <div class="kpi"><small>Intereses pagados</small><b id="aInt"></b></div>
+  </div>
+
+  <h3>Cómo se divide cada pago</h3>
+  <div class="legend"><span><i style="background:#c2492d"></i>Interés</span><span><i style="background:#1f8a5b"></i>Abono a capital</span></div>
+  <div class="chartbox"><svg id="cAnu" viewBox="0 0 720 260" width="100%" role="img" aria-label="División de cada pago"></svg></div>
+  <p class="small">Todas las barras miden lo mismo porque el pago es igual. Lo que cambia es cuánto de cada barra es interés y cuánto es capital.</p>
+
+  <div class="vs">
+    <div class="opt bad"><h4>Atajo incorrecto</h4><p id="aWrong"></p></div>
+    <div class="opt good"><h4>Anualidad</h4><p id="aRight"></p></div>
+  </div>
+</section>
+
+<!-- 5. HOJAS -->
+<section id="hojas5">
+  <span class="step">Paso 5</span>
+  <h2>Cómo armar tus cuatro hojas</h2>
+  <p class="lead">Elige una hoja y haz clic en una fórmula azul para ver qué hace. Las columnas B a M son los meses de enero a diciembre.</p>
+  <div class="tabs sheet-tabs" id="s5Tabs" role="group" aria-label="Hoja">
+    <button type="button" data-s="1" class="on" aria-pressed="true">Hoja 1 · Ingresos</button>
+    <button type="button" data-s="2" aria-pressed="false">Hoja 2 · Egresos</button>
+    <button type="button" data-s="3" aria-pressed="false">Hoja 3 · Saldo</button>
+    <button type="button" data-s="4" aria-pressed="false">Hoja 4 · Preguntas</button>
+  </div>
+  <div class="fbar"><b>fx</b><span id="ftext5">Selecciona una celda azul.</span></div>
+  <div class="tablewrap"><table class="sheet" id="sheet5"></table></div>
+  <div class="explain" id="fexp5" aria-live="polite">Aquí aparecerá la explicación de la fórmula.</div>
+  <div class="note blue"><b>Referencias a otra hoja:</b> <span class="mono">=Hoja1!B5</span> trae el valor de la celda B5 de la Hoja 1. Si tus hojas tienen otro nombre, escribe <span class="mono">=</span>, cambia a la otra hoja con el mouse, haz clic en la celda y presiona Enter: la hoja escribe la referencia por ti.</div>
+  <p class="small">En Excel en inglés y en Google Sheets: <span class="mono">SUMA</span> = <span class="mono">SUM</span>, <span class="mono">SI</span> = <span class="mono">IF</span>, <span class="mono">PAGO</span> = <span class="mono">PMT</span>. Según la configuración de tu equipo, el separador de argumentos puede ser coma o punto y coma.</p>
+</section>
+
+<!-- 6. RUTA -->
+<section id="ruta5">
+  <span class="step">Paso 6</span>
+  <h2>Ruta de trabajo para cada parte</h2>
+  <details><summary>Hoja 1 · Ingresos anuales</summary>
+    <ol class="steps"><li>Escribe el sueldo de cada persona en enero y copia la fórmula hacia la derecha hasta diciembre.</li><li>Suma los tres sueldos de cada mes en la fila de ingresos totales.</li><li>Agrega una columna de total anual con <span class="mono">SUMA</span>.</li></ol></details>
+  <details><summary>Hoja 2 · Egresos con tus gastos reales</summary>
+    <ol class="steps"><li>Usa cantidades reales o aproximadas de tu casa. Si no pagan renta, cambia esa fila por otro gasto que sí tengan.</li><li>Agrega la hipoteca que indica la actividad en todos los meses.</li><li>Si un servicio se paga cada dos meses, escríbelo solo en los meses que corresponde.</li><li>Suma cada mes en la fila de egresos totales.</li></ol></details>
+  <details><summary>Hoja 3 · Saldo</summary>
+    <ol class="steps"><li>Trae los ingresos totales de la Hoja 1 y los egresos totales de la Hoja 2.</li><li>Saldo = ingresos − egresos, mes por mes.</li><li>Agrega una fila de ahorro acumulado: te servirá para la pregunta 2.</li></ol>
+    <div class="note">Si tu saldo sale negativo, es un dato importante: escríbelo y coméntalo en tu conclusión.</div></details>
+  <details><summary>Pregunta 1 · Costo de las cajas de loseta</summary>
+    <ol class="steps"><li>Multiplica el precio por caja por el número de cajas. Escribe ambos datos en celdas y usa una fórmula.</li></ol></details>
+  <details><summary>Pregunta 2 · ¿Se puede comprar en 5 meses?</summary>
+    <ol class="steps"><li>Revisa el ahorro acumulado al final de mayo (quinto mes).</li><li>Compáralo con el costo de la pregunta 1 y justifica con las dos cifras.</li><li>Si no alcanza, calcula cuántos meses necesitarían.</li></ol></details>
+  <details><summary>Pregunta 3 · Pago mensual a crédito</summary>
+    <ol class="steps"><li>La tasa del enunciado es <b>anual</b>: divídela entre 12 para obtener la tasa mensual.</li><li>El plazo es el número de pagos mensuales.</li><li>Usa <span class="mono">PAGO</span> con el costo de la pregunta 1 como monto.</li><li>Compara el pago mensual con tu saldo mensual: ¿lo pueden pagar sin quedar en negativo?</li></ol></details>
+  <details><summary>Conclusión</summary>
+    <ol class="steps"><li>Explica qué aprendiste al ver tus ingresos y egresos de todo un año.</li><li>Compara ahorrar contra pedir el crédito: cuánto tardas y cuánto pagas en cada caso.</li><li>Da un ejemplo de una decisión de consumo que tomarías distinto.</li></ol></details>
+</section>
+
+<section id="quiz5"><span class="step">Paso 7</span><h2>¿Lo entendí? Tres situaciones rápidas</h2><div id="qz5"></div></section>
+
+<section id="lista5"><span class="step">Paso 8</span><h2>Antes de entregar</h2>
+  <div class="check" id="check5">
+    <label><input type="checkbox"> Hoja 1: ingresos de enero a diciembre con fórmulas y su total.</label>
+    <label><input type="checkbox"> Hoja 2: egresos con mis gastos reales, incluida la hipoteca, y su total.</label>
+    <label><input type="checkbox"> Hoja 3: saldo mensual tomado de las hojas 1 y 2 con fórmulas.</label>
+    <label><input type="checkbox"> Hoja 4: costo de las losetas calculado con fórmula.</label>
+    <label><input type="checkbox"> Justifiqué la pregunta 2 con el ahorro acumulado de 5 meses.</label>
+    <label><input type="checkbox"> Calculé el pago mensual con la tasa mensual (anual ÷ 12) y 12 pagos.</label>
+    <label><input type="checkbox"> Escribí una conclusión sobre la utilidad de planificar el presupuesto.</label>
+    <label><input type="checkbox"> Cité fuentes y herramientas de IA según el manual vigente de PL-SEP.</label>
+  </div>
+  <div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0"><div></div></div>
+  <p class="small ptext">0 de 8</p>
+</section>
+</main>
+</div>
+
+<!-- ===================== ACTIVIDAD 6 ===================== -->
+<div class="activity" id="act6" hidden>
+<nav aria-label="Secciones de la actividad 6"><div class="wrap">
+  <a href="#capitalizacion">1. Capitalización</a>
+  <a href="#instituciones">2. Comparar instituciones</a>
+  <a href="#enganche">3. Del ahorro al enganche</a>
+  <a href="#amortizacion">4. Tabla de amortización</a>
+  <a href="#plazos">5. 24 o 48 meses</a>
+  <a href="#hojas6">6. En la hoja de cálculo</a>
+  <a href="#ruta6">7. Ruta por pregunta</a>
+  <a href="#quiz6">8. ¿Lo entendí?</a>
+  <a href="#lista6">9. Antes de entregar</a>
+</div></nav>
+<main>
+<section class="intro"><span class="step">Actividad integradora 6 · Mi inversión</span><h2>Invertir hoy para pagar menos mañana</h2><p class="lead">Vas a comparar dónde conviene invertir un ahorro, usar lo que obtengas como enganche de un auto y construir la tabla de amortización del crédito. Todo se conecta: la inversión reduce lo que debes y la tabla muestra cómo pagas cada mes.</p></section>
+
+<!-- 1. CAPITALIZACIÓN -->
+<section id="capitalizacion">
+  <span class="step">Paso 1</span>
+  <h2>¿Qué significa “capitalización”?</h2>
+  <p class="lead">Capitalizar es <b>sumar los intereses ganados al capital</b> para que, en el siguiente periodo, también generen intereses. Mientras más seguido se capitaliza, más rápido crece tu dinero.</p>
+  <div class="formula"><span class="nw">M = C × (1 + r ÷ m)<sup>m × t</sup></span> &nbsp;&nbsp; <span class="nw">Rendimiento = M − C</span></div>
+  <div class="grid2"><ul>
+    <li><b>C</b>: capital que inviertes.</li><li><b>r</b>: tasa anual en decimal.</li><li><b>t</b>: tiempo en años.</li>
+  </ul><ul>
+    <li><b>m</b>: veces que se capitaliza en un año: anual = 1, semestral = 2, trimestral = 4, mensual = 12.</li><li><b>M</b>: monto final.</li>
+  </ul></div>
+
+  <h3>Prueba: la misma tasa con distinta capitalización</h3>
+  <p>Capital de ejemplo: <b>$40&nbsp;000</b> durante 1 año.</p>
+  <div class="ctrls"><div class="ctrl"><label for="kR">Tasa anual <span class="val" id="vkR"></span></label><input type="range" id="kR" min="5" max="8" step="0.5" value="7"></div></div>
+  <div class="capcards" id="capCards"></div>
+  <div class="note blue">Con la <b>misma tasa</b>, la capitalización mensual gana más que la anual. Pero la diferencia es pequeña: <b>la tasa pesa más que la capitalización</b>. Por eso hay que calcular, no solo mirar la tasa.</div>
+</section>
+
+<!-- 2. INSTITUCIONES -->
+<section id="instituciones">
+  <span class="step">Paso 2</span>
+  <h2>Comparar instituciones: rendimiento y riesgo</h2>
+  <p class="lead">Cinco instituciones de ejemplo, con un capital de $40&nbsp;000 a 1 año. Calcula los rendimientos y después elige según el riesgo que estás dispuesto a aceptar.</p>
+  <div class="row"><button type="button" class="btn" id="iCalc">Calcular rendimientos ▸</button></div>
+  <div class="tablewrap"><table id="inst"><thead><tr><th scope="col">Institución</th><th scope="col">Tasa anual</th><th scope="col">Capitalización</th><th scope="col">Tipo</th><th scope="col">Riesgo</th><th scope="col">Monto final</th><th scope="col">Rendimiento</th></tr></thead><tbody id="instBody"></tbody></table></div>
+
+  <h3>¿Cuánto riesgo aceptas?</h3>
+  <div class="row" id="riskPick" role="group" aria-label="Riesgo aceptado">
+    <button type="button" class="pill" data-k="1">Solo riesgo bajo</button>
+    <button type="button" class="pill" data-k="2">Hasta medio-bajo</button>
+    <button type="button" class="pill on" data-k="3">Cualquier riesgo</button>
+  </div>
+  <div class="explain" id="iMsg" aria-live="polite"></div>
+  <div class="note"><b>Para justificar tu elección</b> relaciona los cuatro datos: tasa, capitalización, tipo de inversión y riesgo. Si el dinero es para un enganche con fecha fija, perderlo sería grave: muchas personas prefieren menor rendimiento a cambio de más seguridad. No hay una sola respuesta correcta; lo que se evalúa es tu argumento con cifras.</div>
+</section>
+
+<!-- 3. ENGANCHE -->
+<section id="enganche">
+  <span class="step">Paso 3</span>
+  <h2>Del ahorro al enganche</h2>
+  <p class="lead">El monto final de la inversión elegida se usa como enganche. Lo que falta para completar el precio es lo que se pide prestado.</p>
+  <div class="flowline" id="flow"></div>
+  <p class="small">Auto de ejemplo: <b>$210&nbsp;000</b>. La institución es la que quedó seleccionada en el paso 2.</p>
+  <div class="note blue"><b>Monto financiado = precio del auto − enganche.</b> Este es el valor de <b>P</b> en la tabla de amortización, no el precio completo.</div>
+</section>
+
+<!-- 4. AMORTIZACIÓN -->
+<section id="amortizacion">
+  <span class="step">Paso 4</span>
+  <h2>La tabla de amortización, renglón por renglón</h2>
+  <p class="lead">Una tabla de amortización muestra cómo se paga un crédito con una <b>anualidad</b>: el pago es igual cada mes, pero el interés baja y el abono a capital sube, hasta que el saldo llega a cero.</p>
+  <div class="sel-row">
+    <label for="tR">Tasa mensual<select id="tR"><option value="1">1 %</option><option value="2">2 %</option><option value="3" selected>3 %</option><option value="5">5 %</option><option value="8">8 %</option><option value="10">10 %</option></select></label>
+    <label for="tN">Plazo<select id="tN"><option value="12">12 meses</option><option value="24" selected>24 meses</option><option value="36">36 meses</option><option value="48">48 meses</option></select></label>
+  </div>
+  <div class="explain" id="tPay"></div>
+  <div class="row">
+    <button type="button" class="btn" id="tNext">Calcular el siguiente mes ▸</button>
+    <button type="button" class="btn ghost" id="tAll">Mostrar toda la tabla</button>
+    <button type="button" class="btn ghost" id="tReset">Reiniciar</button>
+  </div>
+  <div class="explain" id="tExplain" aria-live="polite"></div>
+  <div class="tablewrap"><table class="amort"><thead><tr><th scope="col">Mes</th><th scope="col">Saldo inicial</th><th scope="col">Pago</th><th scope="col">Interés</th><th scope="col">Abono a capital</th><th scope="col">Saldo final</th></tr></thead><tbody id="tBody"></tbody><tfoot id="tFoot"></tfoot></table></div>
+  <div class="note"><b>En esta actividad la tasa es mensual:</b> úsala directamente en cada renglón, <b>sin dividir entre 12</b>. Es distinto de la Actividad 5, donde la tasa era anual y sí se dividía entre 12. Las opciones de este ejemplo también son mensuales.</div>
+</section>
+
+<!-- 5. PLAZOS -->
+<section id="plazos">
+  <span class="step">Paso 5</span>
+  <h2>¿Qué cambia si pagas en 24 o en 48 meses?</h2>
+  <p class="lead">En tu actividad harás <b>dos tablas de amortización</b>: una a 48 meses (pregunta a) y otra a 24 meses (pregunta b). Con el mismo monto financiado y la misma tasa de ejemplo, así se comparan los dos plazos. También puedes ver cada tabla completa en el paso 4 cambiando el plazo.</p>
+  <div class="vs" id="vsPlazos"></div>
+  <p class="big-idea">Un plazo más largo <b>baja la mensualidad</b>, pero <b>sube el total de intereses</b>. La pregunta es cuánto te cuesta esa comodidad.</p>
+</section>
+
+<!-- 6. HOJAS -->
+<section id="hojas6">
+  <span class="step">Paso 6</span>
+  <h2>Cómo armar tus hojas</h2>
+  <div class="tabs sheet-tabs" id="s6Tabs" role="group" aria-label="Hoja">
+    <button type="button" data-s="1" class="on" aria-pressed="true">Hoja 1 · Inversión</button>
+    <button type="button" data-s="2" aria-pressed="false">Hoja 2 · Amortización</button>
+  </div>
+  <div class="fbar"><b>fx</b><span id="ftext6">Selecciona una celda azul.</span></div>
+  <div class="tablewrap"><table class="sheet" id="sheet6"></table></div>
+  <div class="explain" id="fexp6" aria-live="polite">Aquí aparecerá la explicación de la fórmula.</div>
+  <p class="small">En inglés y en Google Sheets: <span class="mono">PAGO</span> = <span class="mono">PMT</span>, <span class="mono">VF</span> = <span class="mono">FV</span>, <span class="mono">SUMA</span> = <span class="mono">SUM</span>. El separador de argumentos puede ser coma o punto y coma.</p>
+</section>
+
+<!-- 7. RUTA -->
+<section id="ruta6">
+  <span class="step">Paso 7</span>
+  <h2>Ruta de trabajo para cada parte</h2>
+  <details><summary>Pregunta 1 · Rendimiento en cada institución</summary>
+    <ol class="steps"><li>Para cada institución identifica la tasa anual y cuántas veces capitaliza al año (m).</li><li>Calcula el monto final con la fórmula de interés compuesto y un tiempo de 1 año.</li><li>Rendimiento = monto final − capital.</li></ol></details>
+  <details><summary>Pregunta 2 · ¿Dónde invertirías y por qué?</summary>
+    <ol class="steps"><li>Ordena las instituciones por rendimiento.</li><li>Revisa el riesgo de las que más rinden.</li><li>Argumenta con los cuatro datos (tasa, capitalización, tipo y riesgo) y con cifras.</li></ol></details>
+  <details><summary>Tablas de amortización (48 y 24 meses)</summary>
+    <ol class="steps"><li>Enganche = monto final de la inversión que elegiste.</li><li>Monto financiado = precio del auto − enganche.</li><li>La tasa del enunciado es <b>mensual</b>: úsala tal cual, sin dividir entre 12.</li><li>Calcula el pago mensual con <span class="mono">PAGO</span>.</li><li>Arma los renglones: interés = saldo × tasa mensual; abono = pago − interés; saldo final = saldo − abono.</li><li>Haz la tabla de 48 meses y comprueba que el saldo del último mes quede en 0 (o casi, por redondeo).</li><li>Para la tabla de 24 meses, copia la hoja (clic derecho en la pestaña → Mover o copiar → Crear una copia), cambia el plazo a 24 y deja solo 24 renglones.</li></ol></details>
+  <details><summary>Pregunta a · ¿Cuánto pagarás al terminar los 48 meses?</summary>
+    <ol class="steps"><li>Usa la tabla de 48 meses.</li><li>Suma la columna de pagos.</li><li>Calcula cuánto pagaste de intereses: total pagado − monto financiado.</li></ol></details>
+  <details><summary>Pregunta b · ¿Y si el plazo fuera de 24 meses?</summary>
+    <ol class="steps"><li>Usa la tabla de 24 meses.</li><li>Suma la columna de pagos y calcula los intereses.</li><li>Compara mensualidad, total pagado e intereses con los de 48 meses.</li></ol></details>
+  <details><summary>Hoja 3 · Explicación</summary>
+    <ol class="steps"><li>Explica cómo el ahorro permitió invertir y cómo la inversión redujo la deuda.</li><li>Explica qué te enseña la tabla de amortización sobre el costo de un crédito.</li><li>Relaciónalo con una decisión personal o familiar.</li></ol></details>
+</section>
+
+<section id="quiz6"><span class="step">Paso 8</span><h2>¿Lo entendí? Tres situaciones rápidas</h2><div id="qz6"></div></section>
+
+<section id="lista6"><span class="step">Paso 9</span><h2>Antes de entregar</h2>
+  <div class="check" id="check6">
+    <label><input type="checkbox"> Hoja 1: monto final y rendimiento de las cinco instituciones, con fórmulas.</label>
+    <label><input type="checkbox"> Usé el número correcto de capitalizaciones al año en cada institución.</label>
+    <label><input type="checkbox"> Justifiqué mi elección con tasa, capitalización, tipo de inversión y riesgo.</label>
+    <label><input type="checkbox"> Hoja 2: el enganche es el monto final de la inversión elegida.</label>
+    <label><input type="checkbox"> Hice dos tablas de amortización, una a 48 meses y otra a 24, y ambas terminan en 0.</label>
+    <label><input type="checkbox"> Usé la tasa mensual directamente, sin dividir entre 12.</label>
+    <label><input type="checkbox"> Respondí cuánto pago en 48 meses y en 24 meses con la suma de pagos de cada tabla, y los comparé.</label>
+    <label><input type="checkbox"> Hoja 3: expliqué cómo el ahorro, la inversión y la amortización ayudan a decidir.</label>
+    <label><input type="checkbox"> Cité fuentes y herramientas de IA según el manual vigente de PL-SEP.</label>
+  </div>
+  <div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="9" aria-valuenow="0"><div></div></div>
+  <p class="small ptext">0 de 9</p>
+</section>
+</main>
+</div>
+
+<footer>Material de apoyo · Asesoría virtual · Módulo 13 · Actividades integradoras 5 y 6</footer>
+<script src="assets/app.js" defer></script>
+</body>
+</html>
